@@ -1,0 +1,19 @@
+.sudokuSquare {
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.correctPostion {
+  background-color: #00ff00;
+  color: white;
+}
+
+.incorrectPostion {
+  background-color: #ff0000;
+  color: white;
+}
