@@ -1,19 +1,27 @@
 .sudokuSquare {
-  width: 40px;
-  height: 40px;
-  border: 1px solid black;
-  font-size: 20px;
-  cursor: pointer;
+  width: 50px;
+  height: 50px;
   text-align: center;
-  transition: background-color 0.3s;
+  padding: 0;
+  border: 1px solid black;
 }
 
-.correctPostion {
-  background-color: #00ff00;
+.sudokuBoard {
+  border-collapse: collapse;
+  border: 3px solid black;
+  background-color: bisque;
+}
+
+.disabled {
+  background: gray;
+  cursor: not-allowed;
   color: white;
 }
 
-.incorrectPostion {
-  background-color: #ff0000;
-  color: white;
+.bottomBorder {
+  border-bottom: 2px solid black;
+}
+
+.rightBorder {
+  border-right: 2px solid black;
 }

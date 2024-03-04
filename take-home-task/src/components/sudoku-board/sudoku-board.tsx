@@ -1,68 +1,94 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./styles.module.scss";
 import z from "zod";
 import { useForm } from "react-hook-form";
+import { solveSudoku } from "@/utils/SudokuSolver";
 
 type Props = {
-  values: number[][];
+  initial: number[][];
 };
 
-export default function SudokuBoard({ values }: Props) {
-  const [board, setBoard] = React.useState(values);
-
-  console.log(board);
+export default function SudokuBoard({ initial }: Props) {
+  const [board, setBoard] = React.useState<number[][]>(initial);
   return (
-    <div>
-      {values.map((row, rowIndex) => (
-        <div key={rowIndex}>
-          {row.map((value, columnIndex) => (
-            <SudokuSquare
-              key={columnIndex}
-              value={value}
-              onChange={(e) => {
-                const newBoard = [...board];
-                newBoard[rowIndex][columnIndex] = e;
-                setBoard(newBoard);
-              }}
-            />
-          ))}
-        </div>
-      ))}
-    </div>
+    <>
+      <button
+        onClick={() => {
+          const solved = solveSudoku(board);
+          if (!solved) {
+            alert("This sudoku is not solvable");
+            return;
+          }
+          setBoard(solved);
+        }}
+      >
+        Solve
+      </button>
+      <table>
+        <tbody>
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((row, rowIndex) => {
+            return (
+              <tr
+                key={rowIndex}
+                className={(row + 1) % 3 === 0 ? styles.bottomBorder : ""}
+              >
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((col, columnIndex) => {
+                  return (
+                    <td
+                      key={rowIndex + columnIndex}
+                      className={(col + 1) % 3 === 0 ? styles.rightBorder : ""}
+                    >
+                      <SudokuSquare
+                        disabled={initial[row][col] !== 0}
+                        value={board[row][col]}
+                        onChange={(value) => {
+                          const newBoard = board;
+                          newBoard[rowIndex][columnIndex] = value;
+                          setBoard(newBoard);
+                        }}
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
   );
 }
 
 const SudokuSquare = ({
   value,
   onChange,
-  correctPosition,
+  disabled,
 }: {
-  correctPosition: boolean;
-  value: number | null;
-  onChange: (value: number | null) => void;
+  disabled: boolean;
+  value: number;
+  onChange: (value: number) => void;
 }) => {
-  const { register, setValue } = useForm({
-    defaultValues: {
-      value,
-    },
-  });
+  const { register, setValue } = useForm({});
   const numberValid = z.coerce.number().min(1).max(9);
+
+  useEffect(() => {
+    setValue("value", value === 0 ? null : value);
+  }, [value]);
+
   return (
     <input
       type="text"
-      disabled={correctPosition}
-      className={`${styles.sudokuSquare} ${
-        correctPosition && styles.correctPostion
-      }`}
+      disabled={disabled}
+      className={`${styles.sudokuSquare} 
+    ${disabled && styles.disabled}`}
       {...register("value", {
         min: 1,
         max: 9,
         valueAsNumber: true,
         onChange: (e) => {
           if (e.target.value === "") {
-            onChange(null);
             setValue("value", null);
             return;
           }
