@@ -5,23 +5,26 @@ import styles from "./styles.module.scss";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { solveSudoku } from "@/utils/SudokuSolver";
+import { getDeepCopy } from "@/utils/helpers";
 
 type Props = {
   initial: number[][];
 };
 
 export default function SudokuBoard({ initial }: Props) {
-  const [board, setBoard] = React.useState<number[][]>(initial);
+  const [board, setBoard] = React.useState<number[][]>(getDeepCopy(initial));
+
   return (
-    <>
+    <div className={styles.wrapper}>
       <button
+        className={styles.button}
         onClick={() => {
-          const solved = solveSudoku(board);
+          const solved = solveSudoku(getDeepCopy(board));
           if (!solved) {
             alert("This sudoku is not solvable");
             return;
           }
-          setBoard(solved);
+          setBoard(getDeepCopy(solved));
         }}
       >
         Solve
@@ -57,7 +60,7 @@ export default function SudokuBoard({ initial }: Props) {
           })}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
 

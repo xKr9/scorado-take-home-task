@@ -23,7 +23,6 @@ export function solveSudoku(board: number[][]) {
         for (let n = 1; n <= 9; n++) {
           if (isValid(board, y, x, n)) {
             board[y][x] = n;
-
             if (solveSudoku(board)) return board;
           }
         }
